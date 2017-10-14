@@ -24,10 +24,9 @@ namespace PotterKata
             scanner.Add(1);
             scanner.Add(2);
 
-            var expectedDiscountValue = .8;
-            var expectedTotalBeforeDiscount = 16;
-            var expected = expectedTotalBeforeDiscount - expectedDiscountValue;
-
+            const double expectedDiscountValue = 0.8;
+            const int expectedTotalBeforeDiscount = 16;
+            const double expected = expectedTotalBeforeDiscount - expectedDiscountValue;
             Assert.AreEqual(expected, scanner.GetTotal());
         }
         [TestMethod]
@@ -39,10 +38,9 @@ namespace PotterKata
             scanner.Add(2);
             scanner.Add(3);
 
-            var expectedDiscountValue = 2.4;
-            var expectedTotalBeforeDiscount = 24;
-            var expected = expectedTotalBeforeDiscount - expectedDiscountValue;
-
+            const double expectedDiscountValue = 2.4;
+            const int expectedTotalBeforeDiscount = 24;
+            const double expected = expectedTotalBeforeDiscount - expectedDiscountValue;
             Assert.AreEqual(expected, scanner.GetTotal());
         }
     }
@@ -61,7 +59,7 @@ namespace PotterKata
         };
         private const double SingleBookPrice = 8;
 
-        private double GetDiscountValueForPercent(int percent)
+        private double GetDiscountAmountPerBook(int percent)
         {
             var percentAsDecimal = (double)percent / 100;
             return percentAsDecimal * SingleBookPrice;
@@ -87,18 +85,16 @@ namespace PotterKata
             return _total;
         }
 
+        private Dictionary<int,int> DiscountQuanityPercentages = new Dictionary<int, int>()
+        {
+             {1,0 },{2,5 },{3,10 }, {4,20 }, {5,25 }
+        };
+
         private void ApplyDiscount()
         {
-            var uniqueList = _basket.Distinct();
+            var uniqueBooks = _basket.Distinct().Count();
 
-            if (uniqueList.Count() == 3)
-            {
-                _total -= uniqueList.Count() * GetDiscountValueForPercent(10);
-            }
-            else if (uniqueList.Count() == 2)
-            {
-                _total -= uniqueList.Count() * GetDiscountValueForPercent(5);
-            }    
+            _total -= uniqueBooks * GetDiscountAmountPerBook(DiscountQuanityPercentages[uniqueBooks]);
         }
     }
 
