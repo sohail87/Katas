@@ -25,7 +25,7 @@ namespace PotterKata
             scanner.Add(1);
             scanner.Add(2);
 
-            const double expectedDiscountValue = 0.8;
+            const double expectedDiscountValue = 0.4 * 2;
             const int expectedTotalBeforeDiscount = 16;
             const double expected = expectedTotalBeforeDiscount - expectedDiscountValue;
             Assert.AreEqual(expected, scanner.GetTotal());
@@ -40,8 +40,23 @@ namespace PotterKata
             scanner.Add(2);
             scanner.Add(3);
 
-            const double expectedDiscountValue = 2.4;
+            const double expectedDiscountValue = 0.8 * 3;
             const int expectedTotalBeforeDiscount = 24;
+            const double expected = expectedTotalBeforeDiscount - expectedDiscountValue;
+            Assert.AreEqual(expected, scanner.GetTotal());
+        }
+        [TestMethod]
+        public void Buying_4_Different_Potter_Book_Gets_20Percent_Discount()
+        {
+            var scanner = new Scanner();
+
+            scanner.Add(1);
+            scanner.Add(2);
+            scanner.Add(3);
+            scanner.Add(4);
+
+            const double expectedDiscountValue = 1.6 * 4;
+            const int expectedTotalBeforeDiscount = 32;
             const double expected = expectedTotalBeforeDiscount - expectedDiscountValue;
             Assert.AreEqual(expected, scanner.GetTotal());
         }
