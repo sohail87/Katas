@@ -24,7 +24,26 @@ namespace PotterKata
             scanner.Add(1);
             scanner.Add(2);
 
-            Assert.AreEqual(15.2, scanner.GetTotal());
+            var expectedDiscountValue = .8;
+            var expectedTotalBeforeDiscount = 16;
+            var expected = expectedTotalBeforeDiscount - expectedDiscountValue;
+
+            Assert.AreEqual(expected, scanner.GetTotal());
+        }
+        [TestMethod]
+        public void Buying_3_Different_Potter_Book_Gets_10Percent_Discount()
+        {
+            var scanner = new Scanner();
+            
+            scanner.Add(1);
+            scanner.Add(2);
+            scanner.Add(3);
+
+            var expectedDiscountValue = 2.4;
+            var expectedTotalBeforeDiscount = 24;
+            var expected = expectedTotalBeforeDiscount - expectedDiscountValue;
+
+            Assert.AreEqual(expected, scanner.GetTotal());
         }
     }
 
@@ -72,7 +91,11 @@ namespace PotterKata
         {
             var uniqueList = _basket.Distinct();
 
-            if (uniqueList.Count() == 2)
+            if (uniqueList.Count() == 3)
+            {
+                _total -= uniqueList.Count() * GetDiscountValueForPercent(10);
+            }
+            else if (uniqueList.Count() == 2)
             {
                 _total -= uniqueList.Count() * GetDiscountValueForPercent(5);
             }    
