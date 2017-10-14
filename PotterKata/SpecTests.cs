@@ -64,6 +64,21 @@ namespace PotterKata
 
             Assert.AreEqual(GetExpectedTotal(5, 2), scanner.GetTotal());
         }
+        [TestMethod]
+        public void Buying_5_Different_Potter_Book_Gets_25Percent_Discount_And_1_Duplicate()
+        {
+            var scanner = new Scanner();
+
+            scanner.Add(1);
+            scanner.Add(2);
+            scanner.Add(3);
+            scanner.Add(4);
+            scanner.Add(5);
+            scanner.Add(1);
+
+
+            Assert.AreEqual(GetExpectedTotal(5, 2)+8, scanner.GetTotal());
+        }
 
         private static double GetExpectedTotal(int uniqueBooks, double discount)
         {
