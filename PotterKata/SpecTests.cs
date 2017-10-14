@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -9,52 +7,54 @@ namespace PotterKata
     [TestClass]
     public class SpecTests
     {
-        /*
-"Harry Potter and the Sorcerer's Stone"
-"Harry Potter and the Chamber of Secrets"
-"Harry Potter and the Prisoner of Azkaban"
-"Harry Potter and the Goblet of Fire"
-"Harry Potter and the Order of the Phoenix"
-"Harry Potter and the Half-Blood Prince"
-"Harry Potter and the Deathly Hallows"
-*/
         [TestMethod]
         public void Buying_1_Potter_Book_Costs_8_Euro()
         {
-            var basket = new Basket();
+            var basket = new Scanner();
             
-            basket.Add(new Book("Harry Potter and the Sorcerer's Stone"));
+            basket.Add(1);
 
             Assert.AreEqual(8.00, basket.GetTotal());
         }
         [TestMethod]
         public void Buying_2_Different_Potter_Book_Gets_5Percent_Discount()
         {
-            var basket = new Basket();
+            var scanner = new Scanner();
             
-            basket.Add(new Book("Harry Potter and the Sorcerer's Stone"));
-            basket.Add(new Book("Harry Potter and the Chamber of Secrets"));
+            scanner.Add(1);
+            scanner.Add(2);
 
-            Assert.AreEqual(15.2, basket.GetTotal());
+            Assert.AreEqual(15.2, scanner.GetTotal());
         }
     }
 
-    public class Basket
+    public class Scanner
     {
+        private Dictionary<int, Book> books = new Dictionary<int, Book>()
+        {
+            {1,new Book("Harry Potter and the Sorcerer's Stone")},
+            {2,new Book("Harry Potter and the Chamber of Secrets")},
+            {3,new Book("Harry Potter and the Prisoner of Azkaban")},
+            {4,new Book("Harry Potter and the Goblet of Fire")},
+            {5,new Book("Harry Potter and the Order of the Phoenix")},
+            {6,new Book("Harry Potter and the Half-Blood Prince")},
+            {7,new Book("Harry Potter and the Deathly Hallows")}
+        };
         private const double SingleBookPrice = 8;
 
-        private double GetPercentDiscount(int percent)
+        private double GetDiscountValueForPercent(int percent)
         {
-            double percentAsDecimal = (double)percent / 100;
+            var percentAsDecimal = (double)percent / 100;
             return percentAsDecimal * SingleBookPrice;
         }
 
-        private readonly List<Book> _basket = new List<Book> {};
+        private readonly List<Book> _basket = new List<Book>();
+
         private double _total;
 
-        public void Add(Book product)
+        public void Add(int productKey)
         {
-            _basket.Add(product);
+            _basket.Add(books[productKey]);
         }
 
         public double GetTotal()
@@ -74,20 +74,17 @@ namespace PotterKata
 
             if (uniqueList.Count() == 2)
             {
-                _total -= uniqueList.Count() * GetPercentDiscount(5);
-            }
-
+                _total -= uniqueList.Count() * GetDiscountValueForPercent(5);
+            }    
         }
     }
 
     public class Book
     {
         public string Title { get; set; }
-
         public Book(string title)
         {
             Title = title;
         }
-
     }
 }
