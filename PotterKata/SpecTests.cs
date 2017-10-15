@@ -94,6 +94,23 @@ namespace PotterKata
 
             Assert.AreEqual(30.4, scanner.GetTotal());
         }
+        [TestMethod]
+        public void Buying_5_And_3_Different_Potter_Books_Gets_25_And_10_Percent_Discount()
+        {
+            var scanner = new Scanner();
+            scanner.Add(1);
+            scanner.Add(1);
+            scanner.Add(2);
+            scanner.Add(2);
+            scanner.Add(3);
+            scanner.Add(3);
+            scanner.Add(4);
+            scanner.Add(5);
+
+
+
+            Assert.AreEqual(30+21.6, scanner.GetTotal());
+        }
     }
 
     public class Scanner
