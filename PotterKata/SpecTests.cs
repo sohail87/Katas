@@ -27,7 +27,7 @@ namespace PotterKata
             scanner.Add(1);
             scanner.Add(2);
 
-            Assert.AreEqual(GetExpectedTotal(2,0.4), scanner.GetTotal());
+            Assert.AreEqual(15.2, scanner.GetTotal());
         }
 
         [TestMethod]
@@ -39,7 +39,7 @@ namespace PotterKata
             scanner.Add(2);
             scanner.Add(3);
 
-            Assert.AreEqual(GetExpectedTotal(3, 0.8), scanner.GetTotal());
+            Assert.AreEqual(21.6, scanner.GetTotal());
         }
         [TestMethod]
         public void Buying_4_Different_Potter_Book_Gets_20Percent_Discount()
@@ -51,7 +51,7 @@ namespace PotterKata
             scanner.Add(3);
             scanner.Add(4);
             
-            Assert.AreEqual(GetExpectedTotal(4, 1.6), scanner.GetTotal());
+            Assert.AreEqual(25.6, scanner.GetTotal());
         }
         [TestMethod]
         public void Buying_5_Different_Potter_Book_Gets_25Percent_Discount()
@@ -64,7 +64,7 @@ namespace PotterKata
             scanner.Add(4);
             scanner.Add(5);
 
-            Assert.AreEqual(GetExpectedTotal(5, 2), scanner.GetTotal());
+            Assert.AreEqual(30, scanner.GetTotal());
         }
         [TestMethod]
         public void Buying_5_Different_Potter_Book_Gets_25Percent_Discount_And_1_Duplicate()
@@ -79,7 +79,7 @@ namespace PotterKata
             scanner.Add(1);
 
 
-            Assert.AreEqual(GetExpectedTotal(5, 2)+8, scanner.GetTotal());
+            Assert.AreEqual(38, scanner.GetTotal());
         }
         [TestMethod]
         public void Buying_2_Different_Potter_Books_Twice_Gets_5Percent_Discount_Twice()
@@ -93,14 +93,6 @@ namespace PotterKata
 
 
             Assert.AreEqual(30.4, scanner.GetTotal());
-        }
-
-        private static double GetExpectedTotal(int uniqueBooks, double discount)
-        {
-            double expectedDiscountValue = discount * uniqueBooks;
-            int expectedTotalBeforeDiscount = 8 * uniqueBooks;
-            double expected = expectedTotalBeforeDiscount - expectedDiscountValue;
-            return expected;
         }
     }
 
@@ -141,17 +133,19 @@ namespace PotterKata
         public double GetTotal()
         {
             _total = 0.00;
-            _total += SingleBookPrice * _basket.Count();
-
-            CalculateDiscount();
-
+            var basketTotalBeforeDiscount = SingleBookPrice * _basket.Count();
+            Console.WriteLine($"Before Discount: {basketTotalBeforeDiscount}");
+            var discount = CalculateDiscount();
+            Console.WriteLine($"Total Discount: -{discount}");
+            _total = basketTotalBeforeDiscount - discount;
+            Console.WriteLine($"Total: {_total}");
             return _total;
         }
 
 
-        private void CalculateDiscount()
+        private double CalculateDiscount()
         {
-
+            var discount = 0.00;
             Dictionary<int,Book> basket = new Dictionary<int, Book>(_basket); 
 
             while (basket.Count > 0)
@@ -170,20 +164,20 @@ namespace PotterKata
                 {
                     basket.Remove(item);
                 }
-                UpdateTotal(distinctBooks.Count);
+                discount += GetTotalDiscount(distinctBooks.Count);
 
             }
-
+            return discount;
         }
 
 
-        private void UpdateTotal(int numberOfBooks)
+        private double GetTotalDiscount(int numberOfBooks)
         {
             var percent = _discountQuanityPercentages[numberOfBooks];
             var percentAsDecimal = (double)percent / 100;
             var discount = percentAsDecimal * SingleBookPrice;
-            Console.WriteLine($"Discount: -{discount}");
-            _total -= (discount * numberOfBooks);
+            Console.WriteLine($"Discount: -{discount} x {numberOfBooks} = -{discount * numberOfBooks}");
+            return (discount * numberOfBooks);
         }
     }
 
