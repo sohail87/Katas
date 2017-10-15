@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -140,26 +142,48 @@ namespace PotterKata
         {
             _total = 0.00;
             _total += SingleBookPrice * _basket.Count();
-            ApplyDiscount();
+
+            CalculateDiscount();
 
             return _total;
         }
 
 
-        private void ApplyDiscount()
+        private void CalculateDiscount()
         {
-            
 
-            var uniqueBooks = _basket.Values.Distinct().Count();
+            Dictionary<int,Book> basket = new Dictionary<int, Book>(_basket); 
 
-            _total -= uniqueBooks * GetDiscountAmountPerBook(_discountQuanityPercentages[uniqueBooks]);
+            while (basket.Count > 0)
+            {
+                var distinctBooks = new HashSet<Book>();
+                var basketItemsToRemove = new List<int>();
+                foreach (var item in basket)
+                {
+                    if (distinctBooks.Add(item.Value))
+                    {
+                        basketItemsToRemove.Add(item.Key);
+                        
+                    }
+                }
+                foreach (var item in basketItemsToRemove)
+                {
+                    basket.Remove(item);
+                }
+                UpdateTotal(distinctBooks.Count);
+
+            }
+
         }
 
 
-        private double GetDiscountAmountPerBook(int percent)
+        private void UpdateTotal(int numberOfBooks)
         {
+            var percent = _discountQuanityPercentages[numberOfBooks];
             var percentAsDecimal = (double)percent / 100;
-            return percentAsDecimal * SingleBookPrice;
+            var discount = percentAsDecimal * SingleBookPrice;
+            Console.WriteLine($"Discount: -{discount}");
+            _total -= (discount * numberOfBooks);
         }
     }
 
