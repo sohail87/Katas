@@ -91,7 +91,9 @@ namespace PotterKata
 
     public class Scanner
     {
-        private Dictionary<int, Book> books = new Dictionary<int, Book>()
+        private const double SingleBookPrice = 8;
+
+        private readonly Dictionary<int, Book> _books = new Dictionary<int, Book>()
         {
             {1, new Book("Harry Potter and the Sorcerer's Stone")},
             {2, new Book("Harry Potter and the Chamber of Secrets")},
@@ -101,14 +103,16 @@ namespace PotterKata
             {6, new Book("Harry Potter and the Half-Blood Prince")},
             {7, new Book("Harry Potter and the Deathly Hallows")}
         };
-
-        private const double SingleBookPrice = 8;
-
-        private double GetDiscountAmountPerBook(int percent)
+        
+        private readonly Dictionary<int, int> _discountQuanityPercentages = new Dictionary<int, int>()
         {
-            var percentAsDecimal = (double) percent / 100;
-            return percentAsDecimal * SingleBookPrice;
-        }
+            {1, 0},
+            {2, 5},
+            {3, 10},
+            {4, 20},
+            {5, 25}
+        };
+
 
         private readonly List<Book> _basket = new List<Book>();
 
@@ -116,7 +120,7 @@ namespace PotterKata
 
         public void Add(int productKey)
         {
-            _basket.Add(books[productKey]);
+            _basket.Add(_books[productKey]);
         }
 
         public double GetTotal()
@@ -130,20 +134,19 @@ namespace PotterKata
             return _total;
         }
 
-        private Dictionary<int, int> DiscountQuanityPercentages = new Dictionary<int, int>()
-        {
-            {1, 0},
-            {2, 5},
-            {3, 10},
-            {4, 20},
-            {5, 25}
-        };
 
         private void ApplyDiscount()
         {
             var uniqueBooks = _basket.Distinct().Count();
 
-            _total -= uniqueBooks * GetDiscountAmountPerBook(DiscountQuanityPercentages[uniqueBooks]);
+            _total -= uniqueBooks * GetDiscountAmountPerBook(_discountQuanityPercentages[uniqueBooks]);
+        }
+
+
+        private double GetDiscountAmountPerBook(int percent)
+        {
+            var percentAsDecimal = (double)percent / 100;
+            return percentAsDecimal * SingleBookPrice;
         }
     }
 
