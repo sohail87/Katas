@@ -8,30 +8,58 @@ namespace HarryPotterBooks
     public class ScannerTests
     {
         [Fact]
-        public void BuyingOneBookCostsEightPounds()
+        public void BuyingNotingCostsZeroPounds()
         {
-            var price = new Scanner().Scan("First Book");
-            price.Should().Be(8);
+            new Scanner().GetTotal().Should().Be(0);
+        }
+        [Theory]
+        [InlineData(HarryPotter.One, 8)]
+        [InlineData(HarryPotter.Two, 8)]
+        [InlineData(HarryPotter.Three, 8)]
+        [InlineData(HarryPotter.Four, 8)]
+        [InlineData(HarryPotter.Five, 8)]
+        public void BuyingOneBookCostsEightPounds(HarryPotter book, int expectedTotal)
+        {
+            new Scanner().Scan(book).GetTotal().Should().Be(expectedTotal);
         }
 
-        [Fact]
-        public void BuyingTwoFirstBooksCostsSixteenPounds()
+        [Theory]
+        [InlineData(new[]{ HarryPotter.One, HarryPotter.One }, 16)]
+        [InlineData(new[] { HarryPotter.Two, HarryPotter.Two }, 16)]
+        [InlineData(new[] { HarryPotter.Three, HarryPotter.Three, HarryPotter.Three }, 24)]
+        [InlineData(new[] { HarryPotter.Four, HarryPotter.Four, HarryPotter.Four, HarryPotter.Four }, 32)]
+        [InlineData(new[] { HarryPotter.Five, HarryPotter.Five, HarryPotter.Five, HarryPotter.Five, HarryPotter.Five }, 40)]
+
+        public void BuyingMultipleOfSameBookHasNoDiscount(HarryPotter[] books, int expectedTotal)
         {
             var scanner = new Scanner();
-            scanner.Scan("First Book");
-            var price = scanner.Scan("First Book");
-            price.Should().Be(16);
+            foreach (var book in books)
+            {
+                scanner.Scan(book);
+            }
+            scanner.GetTotal().Should().Be(expectedTotal);
         }
+    }
+
+    public enum HarryPotter
+    {
+        One,
+        Two,
+        Three,
+        Four,
+        Five,
     }
 
     public class Scanner
     {
-        private List<string> _books = new List<string>();
+        private List<HarryPotter> _books = new List<HarryPotter>();
 
-        public int Scan(string bookName)
+        public Scanner Scan(HarryPotter book)
         {
-            _books.Add(bookName);
-            return _books.Count * 8;
+            _books.Add(book);
+            return this;
         }
+
+        public int GetTotal() => _books.Count* 8;
     }
 }
