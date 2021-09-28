@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26730.12
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31702.278
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PotterKata", "PotterKata\PotterKata.csproj", "{FA4A28F9-4603-4C92-AAEF-9CF96D945E14}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HarryPotterBooks", "HarryPotterBooks\HarryPotterBooks.csproj", "{FB1C1573-5F50-46A0-A412-C1B260F57D48}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{FA4A28F9-4603-4C92-AAEF-9CF96D945E14}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FA4A28F9-4603-4C92-AAEF-9CF96D945E14}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FA4A28F9-4603-4C92-AAEF-9CF96D945E14}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB1C1573-5F50-46A0-A412-C1B260F57D48}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB1C1573-5F50-46A0-A412-C1B260F57D48}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB1C1573-5F50-46A0-A412-C1B260F57D48}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB1C1573-5F50-46A0-A412-C1B260F57D48}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
