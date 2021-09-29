@@ -122,7 +122,7 @@ namespace HarryPotterBooks
             var booksGroupedByTitle = _books.GroupBy(b => b).ToDictionary(k => k.Key, v => v.ToList());
 
             foreach (var sameTitleBooks in booksGroupedByTitle)
-            foreach (var sameTitleBookItem in sameTitleBooks.Value.Select((value, index) => new {index = index, value}))
+            foreach (var sameTitleBookItem in sameTitleBooks.Value.Select((value, index) => new {index, value}))
             {
                 if (discountBags.ContainsKey(sameTitleBookItem.index)) discountBags[sameTitleBookItem.index].Add(sameTitleBookItem.value);
                 else discountBags[sameTitleBookItem.index] = new List<HP> {sameTitleBookItem.value};
