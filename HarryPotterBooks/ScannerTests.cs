@@ -8,52 +8,70 @@ namespace HarryPotterBooks
     public class ScannerTests
     {
         [Theory]
-        [InlineData(HarryPotter.One, 8)]
-        [InlineData(HarryPotter.Two, 8)]
-        [InlineData(HarryPotter.Three, 8)]
-        [InlineData(HarryPotter.Four, 8)]
-        [InlineData(HarryPotter.Five, 8)]
-        public void BuyingOneBookCostsEightPounds(HarryPotter book, int expectedTotal)
+        [InlineData(HP.One, 8)]
+        [InlineData(HP.Two, 8)]
+        [InlineData(HP.Three, 8)]
+        [InlineData(HP.Four, 8)]
+        [InlineData(HP.Five, 8)]
+        public void BuyingOneBookCostsEightPounds(HP book, int expectedTotal)
         {
             new Scanner().Scan(book).GetTotal().Should().Be(expectedTotal);
         }
 
         [Theory]
-        [InlineData(new[] {HarryPotter.One, HarryPotter.One}, 16)]
-        [InlineData(new[] {HarryPotter.Two, HarryPotter.Two}, 16)]
-        [InlineData(new[] {HarryPotter.Three, HarryPotter.Three, HarryPotter.Three}, 24)]
-        [InlineData(new[] {HarryPotter.Four, HarryPotter.Four, HarryPotter.Four, HarryPotter.Four}, 32)]
-        [InlineData(new[] {HarryPotter.Five, HarryPotter.Five, HarryPotter.Five, HarryPotter.Five, HarryPotter.Five},
+        [InlineData(new[] {HP.One, HP.One}, 16)]
+        [InlineData(new[] {HP.Two, HP.Two}, 16)]
+        [InlineData(new[] {HP.Three, HP.Three, HP.Three}, 24)]
+        [InlineData(new[] {HP.Four, HP.Four, HP.Four, HP.Four}, 32)]
+        [InlineData(new[] {HP.Five, HP.Five, HP.Five, HP.Five, HP.Five},
             40)]
-        public void BuyingMultipleOfSameBookHasNoDiscount(HarryPotter[] books, int expectedTotal)
+        public void BuyingMultipleOfSameBookHasNoDiscount(HP[] books, int expectedTotal)
         {
             ScanBooksAndGetTotal(books).Should().Be(expectedTotal);
         }
 
         [Theory]
-        [InlineData(new[] {HarryPotter.One, HarryPotter.Two}, 8 * 2 * 0.95)]
-        [InlineData(new[] {HarryPotter.Two, HarryPotter.Five}, 8 * 2 * 0.95)]
-        [InlineData(new[] { HarryPotter.One, HarryPotter.Two, HarryPotter.Three }, 8 * 3 * 0.90)]
-        [InlineData(new[] { HarryPotter.Three, HarryPotter.Four, HarryPotter.Five }, 8 * 3 * 0.90)]
-        [InlineData(new[] { HarryPotter.One, HarryPotter.Two, HarryPotter.Three, HarryPotter.Four }, 8 * 4 * 0.80)]
-        [InlineData(new[] { HarryPotter.Two, HarryPotter.Three, HarryPotter.Four, HarryPotter.Five }, 8 * 4 * 0.80)]
-        [InlineData(new[] { HarryPotter.One, HarryPotter.Two, HarryPotter.Three, HarryPotter.Four, HarryPotter.Five }, 8 * 5 * 0.75)]
-        public void BuyingDifferentBooksHasAPercentDiscount(HarryPotter[] books, double expectedTotal)
+        [InlineData(new[] {HP.One, HP.Two}, 8 * 2 * 0.95)]
+        [InlineData(new[] {HP.Two, HP.Five}, 8 * 2 * 0.95)]
+        [InlineData(new[] {HP.One, HP.Two, HP.Three}, 8 * 3 * 0.90)]
+        [InlineData(new[] {HP.Three, HP.Four, HP.Five}, 8 * 3 * 0.90)]
+        [InlineData(new[] {HP.One, HP.Two, HP.Three, HP.Four}, 8 * 4 * 0.80)]
+        [InlineData(new[] {HP.Two, HP.Three, HP.Four, HP.Five}, 8 * 4 * 0.80)]
+        [InlineData(new[] {HP.One, HP.Two, HP.Three, HP.Four, HP.Five}, 8 * 5 * 0.75)]
+        public void BuyingDifferentBooksHasAPercentDiscount(HP[] books, double expectedTotal)
         {
             ScanBooksAndGetTotal(books).Should().Be(expectedTotal);
         }
 
         [Theory]
-        [InlineData(new[] { HarryPotter.One, HarryPotter.Two, HarryPotter.One }, ((8 * 2 * 0.95) + 8))]
-        //[InlineData(new[] { HarryPotter.One, HarryPotter.Two, HarryPotter.One, HarryPotter.Two }, (2 * (8 * 2 * 0.95)))]
-        public void BuyingSeveralDifferentBooks(HarryPotter[] books, double expectedTotal)
+        [InlineData(new[] {HP.One, HP.Two, HP.One}, 8 * 2 * 0.95 + 8)]
+        [InlineData(new[] {HP.One, HP.Two, HP.One, HP.Two}, 2 * (8 * 2 * 0.95))]
+        [InlineData(new[] {HP.One, HP.One, HP.Two, HP.Three, HP.Three, HP.Four}, 8 * 4 * 0.8 + 8 * 2 * 0.95)]
+        [InlineData(new[] {HP.One, HP.Two, HP.Two, HP.Three, HP.Four, HP.Five}, 8 + 8 * 5 * 0.75)]
+        public void BuyingSeveralDifferentBooks(HP[] books, double expectedTotal)
         {
             ScanBooksAndGetTotal(books).Should().Be(expectedTotal);
         }
 
+        [Theory]
+        [InlineData(new[] {HP.One, HP.One, HP.Two, HP.Two, HP.Three, HP.Three, HP.Four, HP.Five}
+            , 2 * (8 * 4 * 0.8)
+        )]
+        [InlineData(new[]
+            {
+                HP.One, HP.One, HP.One, HP.One, HP.One,
+                HP.Two, HP.Two, HP.Two, HP.Two, HP.Two,
+                HP.Three, HP.Three, HP.Three, HP.Three,
+                HP.Four, HP.Four, HP.Four, HP.Four, HP.Four,
+                HP.Five, HP.Five, HP.Five, HP.Five
+            }, 3 * (8 * 5 * 0.75) + 2 * (8 * 4 * 0.8)
+        )]
+        public void EdgeCases(HP[] books, double expectedTotal)
+        {
+            ScanBooksAndGetTotal(books).Should().Be(expectedTotal);
+        }
 
-
-        private static double ScanBooksAndGetTotal(HarryPotter[] books)
+        private static double ScanBooksAndGetTotal(HP[] books)
         {
             var scanner = new Scanner();
             foreach (var book in books) scanner.Scan(book);
@@ -68,7 +86,7 @@ namespace HarryPotterBooks
         }
     }
 
-    public enum HarryPotter
+    public enum HP
     {
         One,
         Two,
@@ -79,7 +97,8 @@ namespace HarryPotterBooks
 
     public class Scanner
     {
-        private readonly List<HarryPotter> _books = new List<HarryPotter>();
+        private const int BookPrice = 8;
+        private readonly List<HP> _books = new List<HP>();
 
         private readonly Dictionary<int, double> _discountRules = new Dictionary<int, double>
         {
@@ -91,7 +110,7 @@ namespace HarryPotterBooks
             {5, 0.75}
         };
 
-        public Scanner Scan(HarryPotter book)
+        public Scanner Scan(HP book)
         {
             _books.Add(book);
             return this;
@@ -99,20 +118,17 @@ namespace HarryPotterBooks
 
         public double GetTotal()
         {
-            var total = 0.0;
-            var uniqueBooks = new List<HarryPotter>();
-            var bookGroupings = _books.GroupBy(b => b).ToDictionary(k=>k.Key, v=>v.ToList());
+            var discountBags = new Dictionary<int, List<HP>>();
+            var booksGroupedByTitle = _books.GroupBy(b => b).ToDictionary(k => k.Key, v => v.ToList());
 
-            foreach (var bookGroup in bookGroupings)
+            foreach (var sameTitleBooks in booksGroupedByTitle)
+            foreach (var sameTitleBookItem in sameTitleBooks.Value.Select((value, index) => new {index = index, value}))
             {
-                uniqueBooks.AddRange(bookGroup.Value.Take(1));
-                bookGroupings[bookGroup.Key] = bookGroup.Value.Skip(1).ToList();
+                if (discountBags.ContainsKey(sameTitleBookItem.index)) discountBags[sameTitleBookItem.index].Add(sameTitleBookItem.value);
+                else discountBags[sameTitleBookItem.index] = new List<HP> {sameTitleBookItem.value};
             }
 
-            if (uniqueBooks.Any()) 
-                total = uniqueBooks.Count * 8 * _discountRules[uniqueBooks.Count()];
-
-            return bookGroupings.Aggregate(total, (current, group) => current + group.Value.Count() * 8);
+            return discountBags.Sum(bag => bag.Value.Count * BookPrice * _discountRules[bag.Value.Count]);
         }
     }
 }
