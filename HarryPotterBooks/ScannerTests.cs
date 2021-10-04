@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using FluentAssertions;
 using Xunit;
 
@@ -19,11 +20,11 @@ namespace HarryPotterBooks
         }
 
         [Theory]
-        [InlineData(new[] {HP.One, HP.One}, 16)]
-        [InlineData(new[] {HP.Two, HP.Two}, 16)]
-        [InlineData(new[] {HP.Three, HP.Three, HP.Three}, 24)]
-        [InlineData(new[] {HP.Four, HP.Four, HP.Four, HP.Four}, 32)]
-        [InlineData(new[] {HP.Five, HP.Five, HP.Five, HP.Five, HP.Five},
+        [InlineData(new[] { HP.One, HP.One }, 16)]
+        [InlineData(new[] { HP.Two, HP.Two }, 16)]
+        [InlineData(new[] { HP.Three, HP.Three, HP.Three }, 24)]
+        [InlineData(new[] { HP.Four, HP.Four, HP.Four, HP.Four }, 32)]
+        [InlineData(new[] { HP.Five, HP.Five, HP.Five, HP.Five, HP.Five },
             40)]
         public void BuyingMultipleOfSameBookHasNoDiscount(HP[] books, int expectedTotal)
         {
@@ -31,30 +32,30 @@ namespace HarryPotterBooks
         }
 
         [Theory]
-        [InlineData(new[] {HP.One, HP.Two}, 8 * 2 * 0.95)]
-        [InlineData(new[] {HP.Two, HP.Five}, 8 * 2 * 0.95)]
-        [InlineData(new[] {HP.One, HP.Two, HP.Three}, 8 * 3 * 0.90)]
-        [InlineData(new[] {HP.Three, HP.Four, HP.Five}, 8 * 3 * 0.90)]
-        [InlineData(new[] {HP.One, HP.Two, HP.Three, HP.Four}, 8 * 4 * 0.80)]
-        [InlineData(new[] {HP.Two, HP.Three, HP.Four, HP.Five}, 8 * 4 * 0.80)]
-        [InlineData(new[] {HP.One, HP.Two, HP.Three, HP.Four, HP.Five}, 8 * 5 * 0.75)]
+        [InlineData(new[] { HP.One, HP.Two }, 8 * 2 * 0.95)]
+        [InlineData(new[] { HP.Two, HP.Five }, 8 * 2 * 0.95)]
+        [InlineData(new[] { HP.One, HP.Two, HP.Three }, 8 * 3 * 0.90)]
+        [InlineData(new[] { HP.Three, HP.Four, HP.Five }, 8 * 3 * 0.90)]
+        [InlineData(new[] { HP.One, HP.Two, HP.Three, HP.Four }, 8 * 4 * 0.80)]
+        [InlineData(new[] { HP.Two, HP.Three, HP.Four, HP.Five }, 8 * 4 * 0.80)]
+        [InlineData(new[] { HP.One, HP.Two, HP.Three, HP.Four, HP.Five }, 8 * 5 * 0.75)]
         public void BuyingDifferentBooksHasAPercentDiscount(HP[] books, double expectedTotal)
         {
             ScanBooksAndGetTotal(books).Should().Be(expectedTotal);
         }
 
         [Theory]
-        [InlineData(new[] {HP.One, HP.Two, HP.One}, 8 * 2 * 0.95 + 8)]
-        [InlineData(new[] {HP.One, HP.Two, HP.One, HP.Two}, 2 * (8 * 2 * 0.95))]
-        [InlineData(new[] {HP.One, HP.One, HP.Two, HP.Three, HP.Three, HP.Four}, 8 * 4 * 0.8 + 8 * 2 * 0.95)]
-        [InlineData(new[] {HP.One, HP.Two, HP.Two, HP.Three, HP.Four, HP.Five}, 8 + 8 * 5 * 0.75)]
+        [InlineData(new[] { HP.One, HP.Two, HP.One }, 8 * 2 * 0.95 + 8)]
+        [InlineData(new[] { HP.One, HP.Two, HP.One, HP.Two }, 2 * (8 * 2 * 0.95))]
+        [InlineData(new[] { HP.One, HP.One, HP.Two, HP.Three, HP.Three, HP.Four }, 8 * 4 * 0.8 + 8 * 2 * 0.95)]
+        [InlineData(new[] { HP.One, HP.Two, HP.Two, HP.Three, HP.Four, HP.Five }, 8 + 8 * 5 * 0.75)]
         public void BuyingSeveralDifferentBooks(HP[] books, double expectedTotal)
         {
             ScanBooksAndGetTotal(books).Should().Be(expectedTotal);
         }
 
         [Theory]
-        [InlineData(new[] {HP.One, HP.One, HP.Two, HP.Two, HP.Three, HP.Three, HP.Four, HP.Five}
+        [InlineData(new[] { HP.One, HP.One, HP.Two, HP.Two, HP.Three, HP.Three, HP.Four, HP.Five }
             , 2 * (8 * 4 * 0.8)
         )]
         [InlineData(new[]
@@ -118,17 +119,38 @@ namespace HarryPotterBooks
 
         public double GetTotal()
         {
-            var discountBags = new Dictionary<int, List<HP>>();
+            var discountBags = new List<List<HP>>();
             var booksGroupedByTitle = _books.GroupBy(b => b).ToDictionary(k => k.Key, v => v.ToList());
 
             foreach (var sameTitleBooks in booksGroupedByTitle)
-            foreach (var sameTitleBookItem in sameTitleBooks.Value.Select((value, index) => new {index, value}))
-            {
-                if (discountBags.ContainsKey(sameTitleBookItem.index)) discountBags[sameTitleBookItem.index].Add(sameTitleBookItem.value);
-                else discountBags[sameTitleBookItem.index] = new List<HP> {sameTitleBookItem.value};
-            }
+                foreach (var book in sameTitleBooks.Value)
+                {
+                    if (!discountBags.Any())
+                    {
+                        discountBags.Add(new List<HP>() { book });
+                        continue;
+                    }
 
-            return discountBags.Sum(bag => bag.Value.Count * BookPrice * _discountRules[bag.Value.Count]);
+                    if (discountBags.All(b => b.Contains(book)))
+                    {
+                        discountBags.Add(new List<HP>() { book });
+                        continue;
+                    }
+
+                    foreach (var discountBag in discountBags)
+                    {
+                        if (discountBag.Count == 4 && discountBags.Any(b => b.Count < 4 && b.Count > 1)) continue;
+
+                        if (!discountBag.Contains(book))
+                        {
+                            discountBag.Add(book);
+                            break;
+                        }
+                    }
+
+                }
+
+            return discountBags.Sum(bag => bag.Count * BookPrice * _discountRules[bag.Count]);
         }
     }
 }
